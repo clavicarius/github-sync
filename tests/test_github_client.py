@@ -49,6 +49,16 @@ class TestGitHubClientRun:
         mock_run.assert_not_called()
         assert result == ""
 
+    @mock.patch("subprocess.run")
+    def test_dry_run_label_list_executes_subprocess(self, mock_run):
+        mock_run.return_value = mock.Mock(returncode=0, stdout="[]", stderr="")
+        client = GitHubClient(repository="owner/repo", dry_run=True)
+
+        result = client.run(["label", "list", "--json", "name,color,description"])
+
+        mock_run.assert_called_once()
+        assert result == "[]"
+
 
 class TestGitHubClientListLabels:
     @mock.patch("subprocess.run")

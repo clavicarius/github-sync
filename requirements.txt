@@ -1,0 +1,2 @@
+# gh-sync-labels hat keine externen Python-Abhängigkeiten
+# Das Skript verwendet nur Python Standard-Bibliotheken

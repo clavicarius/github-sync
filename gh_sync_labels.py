@@ -108,9 +108,7 @@ class GitHubClient:
 
             # Keep read operations functional in dry-run mode so
             # comparison/export logic can still operate on real data.
-            if len(args) >= 2 and args[0] == "label" and args[1] == "list":
-                pass
-            else:
+            if args[:2] != ["label", "list"]:
                 return ""
 
         result = subprocess.run(

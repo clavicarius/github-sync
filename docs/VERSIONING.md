@@ -1,70 +1,60 @@
-# Versioning
+## Operational examples
 
-This repository uses automated semantic version tagging via GitHub Actions.
+### 1) First run (no existing semantic version tags)
 
-## Scope
+Repository has no tags matching `v<major>.<minor>.<patch>`.
 
-Version tags are created automatically on **every push to `main`**.
+- Push to `main` triggers workflow.
+- Computed next tag: `v0.1.0`
+- Moving major tag: `v0`
+- Result:
+  - create `v0.1.0`
+  - move/create `v0` to same commit
 
-Additionally, versioning runs on pull requests in **dry-run mode** to preview the next calculated version without creating or pushing tags.
+### 2) Normal run (existing semantic version tags)
 
-## Tag format
+Existing tags include e.g. `v0.1.0`, `v0.1.1`, `v0.1.2`.
 
-- Full version tag: `v<major>.<minor>.<patch>` (example: `v0.3.17`)
-- Moving major tag: `v<major>` (example: `v0`)
+- Push to `main` triggers workflow.
+- Highest semantic version tag is `v0.1.2`.
+- Computed next tag: `v0.1.3`
+- Moving major tag: `v0`
+- Result:
+  - create `v0.1.3`
+  - force-move `v0` to the commit of `v0.1.3`
 
-The `v` prefix is mandatory for all version tags.
+### 3) Pull request dry-run
 
-## Increment strategy
+- `pull_request` event triggers workflow.
+- Workflow computes next full tag and major tag.
+- Result:
+  - values are shown in job summary
+  - **no tags are created**
+  - **no tags are pushed**
 
-- Only the **patch** component is incremented automatically.
-- `major` and `minor` are not auto-incremented by the workflow.
-- If no semantic version tag exists yet, the initial version is:
+### 4) Idempotent rerun / race-condition safety
 
-`v0.1.0`
+Case: computed tag already exists on `origin` (e.g. rerun or concurrent run already pushed it).
 
-## Monotonicity rule
+- Workflow checks remote tags before creating the new tag.
+- If tag exists:
+  - run exits successfully
+  - no additional tag is created
+  - no push is performed
 
-Version numbers must be monotonically increasing across the whole repository history (globally, not only within a single major line).
+### 5) Non-semver tags present
 
-- Gaps in version numbers are allowed.
-- Major lines/tags may be skipped.
+Repository contains tags that do not match strict semver format with `v` prefix (e.g. `release-1`, `1.2.3`, `v1.2`).
 
-## Moving major tags
+- These tags are ignored for version calculation.
+- Only tags matching `^v[0-9]+\.[0-9]+\.[0-9]+$` are considered.
 
-For each created version tag `v<major>.<minor>.<patch>`, the corresponding major tag `v<major>` is moved to the same commit.
+### 6) Moving major tag behavior
+
+When creating a new full tag in a major line, the corresponding major tag is updated.
 
 Example:
 
-- newest full tag: `v0.5.12`
-- major tag `v0` points to the commit of `v0.5.12`
-
-## Dry-run behavior on pull requests
-
-On `pull_request` events, the workflow computes and reports:
-
-- the next full version tag (`vX.Y.Z`)
-- the corresponding moving major tag (`vX`)
-
-In dry-run mode, **no tags are created and no tags are pushed**.
-
-## Idempotency behavior
-
-Before creating a new version tag on `main`, the workflow checks whether the computed tag already exists on `origin`.
-
-- If the tag already exists, the run exits successfully without creating or pushing tags.
-- This prevents duplicate tag creation during reruns or race conditions.
-
-## Recursion / endless-loop protection
-
-The workflow is configured to avoid self-trigger loops caused by its own tagging operations.
-
-Safeguards:
-
-- Version-tagging is only executed for branch pushes to `main` (not tag push triggers).
-- Runs triggered by `github-actions[bot]` on push are skipped.
-
-## Notes
-
-- Non-semver tags are ignored when determining the next version.
-- This document defines the intended behavior; the workflow implementation must follow this contract.
+- new full tag: `v2.4.9`
+- moving major tag updated to: `v2`
+- `v2` points to the same commit as `v2.4.9`

@@ -1,0 +1,6 @@
+Field;Option;Color;Description
+Status;Todo;GRAY;Ready to start
+Status;In Progress;BLUE;Currently being worked on
+Status;In Review;PURPLE;Awaiting review
+Status;Done;GREEN;Completed
+Status;Blocked;RED;Cannot continue

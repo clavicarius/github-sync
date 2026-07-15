@@ -573,7 +573,7 @@ python gh_sync_projects.py
 
 Default behavior:
 
-- uses the current repository owner as project scope
+- uses the current repository as project scope
 - reads `config/projects`
 - creates the project if missing
 - creates missing fields/options

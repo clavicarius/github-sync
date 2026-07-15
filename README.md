@@ -36,7 +36,7 @@ Clone repository:
 ```bash
 git clone <repository>
 cd <repository>
-````
+```
 
 Run label synchronization:
 

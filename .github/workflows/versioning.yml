@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: versioning-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -55,14 +59,19 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Idempotency check: if NEXT_TAG already exists remotely, skip creating/pushing.
+          # Idempotency check: if NEXT_TAG already exists remotely, ensure MAJOR_TAG points to it and exit.
           if git ls-remote --exit-code --tags origin "refs/tags/${NEXT_TAG}" >/dev/null 2>&1; then
-            echo "Tag ${NEXT_TAG} already exists on origin. Skipping."
+            echo "Tag ${NEXT_TAG} already exists on origin. Ensuring ${MAJOR_TAG} points to ${NEXT_TAG}."
+            git fetch --force --tags
+
+            git tag -f "${MAJOR_TAG}" "${NEXT_TAG}"
+            git push origin "${MAJOR_TAG}" --force
+
             {
               echo "## Versioning result"
               echo ""
               echo "- next tag already exists: \`${NEXT_TAG}\`"
-              echo "- major tag unchanged by this run"
+              echo "- ensured major tag points to: \`${MAJOR_TAG}\`"
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi

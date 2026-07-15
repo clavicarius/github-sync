@@ -657,10 +657,8 @@ class GitHubClient:
         """Delete a single-select field option."""
 
         query = """
-        mutation($projectId: ID!, $fieldId: ID!, $optionId: String!) {
+        mutation($optionId: ID!) {
           deleteProjectV2SingleSelectFieldOption(input: {
-            projectId: $projectId
-            fieldId: $fieldId
             optionId: $optionId
           }) {
             clientMutationId
@@ -671,8 +669,6 @@ class GitHubClient:
         self.graphql(
             query,
             {
-                "projectId": project_id,
-                "fieldId": field_id,
                 "optionId": option_id,
             },
         )

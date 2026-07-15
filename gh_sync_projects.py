@@ -1552,7 +1552,7 @@ def parse_arguments() -> argparse.Namespace:
         "--prune",
         action="store_true",
         help=(
-            "Delete managed resources that are missing in CSV."
+            "Delete single-select options that are missing in CSV (fields are not deleted for safety)."
         ),
     )
 

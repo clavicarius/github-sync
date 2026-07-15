@@ -1,0 +1,6 @@
+Field;Option;Color;Description
+Size;XS;GRAY;Very small task
+Size;S;BLUE;Small task
+Size;M;GREEN;Medium task
+Size;L;ORANGE;Large task
+Size;XL;RED;Very large task

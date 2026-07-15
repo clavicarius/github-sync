@@ -619,36 +619,12 @@ class GitHubClient:
         option_id: str,
         option: FieldOption,
     ) -> None:
-        """Update a single-select field option."""
+        """Update a single-select field option via delete + create."""
 
-        query = """
-        mutation($projectId: ID!, $fieldId: ID!, $optionId: String!, $name: String!, $color: ProjectV2SingleSelectFieldOptionColor!, $description: String) {
-          updateProjectV2SingleSelectField(input: {
-            projectId: $projectId
-            fieldId: $fieldId
-            optionId: $optionId
-            name: $name
-            color: $color
-            description: $description
-          }) {
-            projectV2Item {
-              id
-            }
-          }
-        }
-        """
-
-        self.graphql(
-            query,
-            {
-                "projectId": project_id,
-                "fieldId": field_id,
-                "optionId": option_id,
-                "name": option.name,
-                "color": option.color,
-                "description": option.description,
-            },
-        )
+        # Kept for API compatibility with callers.
+        _ = project_id
+        self.delete_single_select_option(project_id, field_id, option_id)
+        self.create_single_select_option(field_id, option)
 
     def delete_single_select_option(
         self,

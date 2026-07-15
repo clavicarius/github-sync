@@ -2,6 +2,7 @@
 
 from gh_sync_projects import (
     FieldOption,
+    GitHubClient,
     Project,
     ProjectField,
     RemoteFieldOption,
@@ -136,3 +137,37 @@ class TestFieldSync:
         assert result.deleted == 0
         assert "Status" in client.created_fields
         assert ("field-Status", "Todo") in client.created_options
+
+
+class TestGitHubClientOptionUpdate:
+    def test_update_single_select_option_recreates_option(self):
+        client = GitHubClient("owner/repo")
+        calls: list[tuple[str, str, str]] = []
+        option = FieldOption(
+            name="Todo",
+            color="GRAY",
+            description="Ready",
+        )
+
+        client.delete_single_select_option = (
+            lambda project_id, field_id, option_id: calls.append(
+                ("delete", field_id, option_id)
+            )
+        )
+        client.create_single_select_option = (
+            lambda field_id, created_option: calls.append(
+                ("create", field_id, created_option.name)
+            )
+        )
+
+        client.update_single_select_option(
+            project_id="project-1",
+            field_id="field-status",
+            option_id="opt-1",
+            option=option,
+        )
+
+        assert calls == [
+            ("delete", "field-status", "opt-1"),
+            ("create", "field-status", "Todo"),
+        ]

@@ -1,0 +1,8 @@
+Name;Type
+Status;single_select
+Priority;single_select
+Size;single_select
+Area;single_select
+Sprint;iteration
+Release;text
+Effort;number

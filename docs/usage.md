@@ -587,7 +587,7 @@ Default directory:
 config/projects/
 ├── project.csv
 ├── fields.csv
-└── options-<field-name>.csv
+└── <field-name>.csv
 ```
 
 - `project.csv`: one row with `Name`, `Description`, `Visibility`

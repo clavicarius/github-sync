@@ -101,11 +101,19 @@ class GitHubClient:
         """
 
         if self.dry_run:
-            logger.info(
-                "[DRY-RUN] gh %s",
-                " ".join(args),
-            )
-            return ""
+            # Keep read operations functional in dry-run mode so
+            # comparison/export logic can still operate on real data.
+            if args[:2] == ["label", "list"]:
+                logger.info(
+                    "[DRY-RUN:READ] gh %s",
+                    " ".join(args),
+                )
+            else:
+                logger.info(
+                    "[DRY-RUN] gh %s",
+                    " ".join(args),
+                )
+                return ""
 
         result = subprocess.run(
             ["gh", *args],

@@ -49,6 +49,36 @@ class TestGitHubClientRun:
         mock_run.assert_not_called()
         assert result == ""
 
+    @mock.patch("subprocess.run")
+    def test_dry_run_label_list_executes_subprocess(self, mock_run):
+        mock_run.return_value = mock.Mock(returncode=0, stdout="[]", stderr="")
+        client = GitHubClient(repository="owner/repo", dry_run=True)
+
+        result = client.run(["label", "list", "--json", "name,color,description"])
+
+        mock_run.assert_called_once()
+        assert result == "[]"
+
+    @mock.patch("subprocess.run")
+    def test_dry_run_label_list_logs_read_marker(self, mock_run, caplog):
+        mock_run.return_value = mock.Mock(returncode=0, stdout="[]", stderr="")
+        client = GitHubClient(repository="owner/repo", dry_run=True)
+
+        with caplog.at_level("INFO"):
+            client.run(["label", "list", "--json", "name,color,description"])
+
+        assert "[DRY-RUN:READ] gh label list --json name,color,description" in caplog.text
+
+    @mock.patch("subprocess.run")
+    def test_dry_run_write_logs_skip_marker(self, mock_run, caplog):
+        client = GitHubClient(repository="owner/repo", dry_run=True)
+
+        with caplog.at_level("INFO"):
+            client.run(["label", "delete", "x"])
+
+        mock_run.assert_not_called()
+        assert "[DRY-RUN] gh label delete x" in caplog.text
+
 
 class TestGitHubClientListLabels:
     @mock.patch("subprocess.run")

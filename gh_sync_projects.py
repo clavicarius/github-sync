@@ -1664,7 +1664,10 @@ def main() -> int:
             overwrite=args.overwrite,
         )
 
-        existing_fields = client.list_project_fields(project_id)
+        if args.dry_run and project_result.created:
+            existing_fields = {}
+        else:
+            existing_fields = client.list_project_fields(project_id)
 
         field_result = sync_fields(
             client=client,

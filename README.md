@@ -1,10 +1,13 @@
-# GitHub Label Synchronization Tool (gh-sync-labels)
+# GitHub Synchronization Tools
 
-Synchronize GitHub repository labels from a CSV configuration.
+Synchronize GitHub labels and Projects v2 definitions from CSV configuration.
 
 ![logo](./assets/logo.png)
 
-`gh_sync_labels` treats the CSV file as the single source of truth and keeps GitHub repository labels synchronized.
+The repository currently provides:
+
+- `gh_sync_labels.py` to manage repository labels as code
+- `gh_sync_projects.py` to manage GitHub Projects v2 (project metadata, fields, and single-select options) as code
 
 ## Features
 
@@ -12,6 +15,9 @@ Synchronize GitHub repository labels from a CSV configuration.
 - Update existing labels
 - Remove obsolete labels
 - Export existing labels
+- Create and update GitHub Projects v2 from CSV definitions
+- Synchronize project fields and single-select options
+- Export GitHub Projects v2 definitions back to CSV
 - Dry-run support
 - CSV validation
 - GitHub Actions support
@@ -32,7 +38,7 @@ git clone <repository>
 cd <repository>
 ````
 
-Run:
+Run label synchronization:
 
 ```bash
 python gh_sync_labels.py
@@ -42,6 +48,20 @@ Full synchronization:
 
 ```bash
 python gh_sync_labels.py \
+  --overwrite \
+  --prune
+```
+
+Run projects synchronization:
+
+```bash
+python gh_sync_projects.py
+```
+
+Projects full synchronization:
+
+```bash
+python gh_sync_projects.py \
   --overwrite \
   --prune
 ```

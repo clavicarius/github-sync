@@ -48,7 +48,7 @@ Existing tags include e.g. `v0.1.0`, `v0.1.1`, `v0.1.2`.
 
 Case: multiple `main` pushes happen close together, or a rerun sees an already-created full tag.
 
-- Workflow-level `concurrency` serializes runs per event/ref (`cancel-in-progress: false`), so `main` push runs queue instead of racing to create the same next tag.
+- Workflow-level `concurrency` groups runs per event/ref. For `push` to `main` runs queue (`cancel-in-progress: false`) so every push gets a tag. For `pull_request` stale runs are cancelled (`cancel-in-progress: true`) since dry-runs have no side effects.
 - Workflow checks remote tags before creating the new full tag.
 - If the full tag already exists:
   - run exits successfully

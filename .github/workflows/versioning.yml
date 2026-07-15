@@ -8,7 +8,9 @@ on:
 
 concurrency:
   group: versioning-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: false
+  # push-to-main: never cancel (every push must get a tag)
+  # pull_request: cancel stale runs (dry-run only, no side effects)
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: write

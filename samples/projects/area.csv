@@ -1,0 +1,6 @@
+Field;Option;Color;Description
+Area;Frontend;BLUE;User interface
+Area;Backend;PURPLE;Backend services
+Area;API;GREEN;Interfaces
+Area;Database;ORANGE;Database changes
+Area;CI/CD;GRAY;Build and deployment

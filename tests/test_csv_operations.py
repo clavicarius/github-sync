@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from gh_sync_labels import load_labels
+from gh_sync_labels import Label, load_labels
 
 
 class TestLoadLabels:
@@ -16,14 +16,18 @@ class TestLoadLabels:
             csv_file = Path(tmpdir) / "labels.csv"
             csv_file.write_text(
                 "Category;Label;Color;Description\n"
-                ";bug;D73A4A;A bug\n"
+                ';bug;#d73a4a;"🐞 A bug"\n'
                 ";feature;1D76DB;A feature\n",
                 encoding="utf-8",
             )
 
             labels = load_labels(csv_file)
             assert len(labels) == 2
-            assert "bug" in labels
+            assert labels["bug"] == Label(
+                name="bug",
+                color="D73A4A",
+                description="🐞 A bug",
+            )
             assert "feature" in labels
 
     def test_load_csv_file_not_found(self):

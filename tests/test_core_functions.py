@@ -65,6 +65,11 @@ class TestLabelComparison:
         b = Label(name="bug", color="1D76DB", description="A bug")
         assert not labels_equal(a, b)
 
+    def test_labels_different_description(self):
+        a = Label(name="bug", color="D73A4A", description="Old")
+        b = Label(name="bug", color="D73A4A", description="New")
+        assert not labels_equal(a, b)
+
 
 class TestSyncAndPrune:
     @mock.patch("subprocess.run")
@@ -89,6 +94,16 @@ class TestSyncAndPrune:
         result = sync_labels(client, desired, existing, overwrite=True)
 
         assert result.updated == 1
+
+    @mock.patch("subprocess.run")
+    def test_sync_skips_unchanged_label(self, mock_run):
+        client = GitHubClient(repository="owner/repo")
+        label = Label(name="bug", color="D73A4A", description="A bug")
+
+        result = sync_labels(client, {"bug": label}, {"bug": label}, overwrite=True)
+
+        assert result.skipped == 1
+        mock_run.assert_not_called()
 
     @mock.patch("subprocess.run")
     def test_prune_delete_obsolete_labels(self, mock_run):

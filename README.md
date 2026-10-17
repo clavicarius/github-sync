@@ -2,7 +2,7 @@
 
 Synchronize GitHub labels and Projects v2 definitions from CSV configuration.
 
-![logo](./assets/logo.png)
+![logo](./assets/social-logo.png)
 
 The repository currently provides:
 
